@@ -14,16 +14,19 @@ RUN apt-get update && \
 
 # 2. Create a non-root user for better security
 RUN useradd --create-home --shell /bin/bash scientist
-WORKDIR /home/scientist/app
+WORKDIR /opt/build
 USER scientist
 
 # 3. Copy requirements.txt and install Python packages
-COPY --chown=scientist:scientist requirements.txt /home/scientist/app/requirements.txt
+COPY --chown=scientist:scientist requirements.txt .
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # 4. Copy project code
-COPY --chown=scientist:scientist . /home/scientist/app
+# COPY --chown=scientist:scientist . /opt/project
+# You can copy the project code to the container and run it directly in cloud or HPC.
+# But this is not recommended in general. The docker image contains the run environment
+# and the code stays within version control.
 
 # 5. Default entrypoint (can be overridden in PyCharm run configuration)
 ENTRYPOINT ["python"]
